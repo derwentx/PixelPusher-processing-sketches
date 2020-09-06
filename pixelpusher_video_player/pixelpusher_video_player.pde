@@ -1,51 +1,50 @@
-import javax.swing.*; 
+import javax.swing.*;
 import processing.video.*;
 import com.heroicrobot.dropbit.registry.*;
 import com.heroicrobot.dropbit.devices.pixelpusher.Pixel;
 import com.heroicrobot.dropbit.devices.pixelpusher.Strip;
 import java.util.*;
 
-Movie myMovie;
+Movie frame = null;
 DeviceRegistry registry;
 PusherObserver observer;
 
 void setup() {
+  selectInput("Select a file to process:", "fileSelected");
   size(640,480);
   registry = new DeviceRegistry();
   observer = new PusherObserver();
   registry.addObserver(observer);
-  registry.setAntiLog(true);
-  
-  // set system look and feel 
-  try { 
-    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); 
-  } catch (Exception e) { 
-    e.printStackTrace();  
-   
-  } 
-   
-  // create a file chooser 
-  final JFileChooser fc = new JFileChooser(); 
-   
-  // in response to a button click: 
-  int returnVal = fc.showOpenDialog(this); 
-   
-  if (returnVal == JFileChooser.APPROVE_OPTION) { 
-    File file = fc.getSelectedFile(); 
-    // see if it's an image 
-    // (better to write a function and check for all supported extensions) 
-    // load the image using the given file path
-    myMovie = new Movie(this, file.getPath());
-    myMovie.loop();
-  } else { 
-    println("Open command cancelled by user."); 
-    exit();
+
+  // set system look and feel
+  try {
+    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+  } catch (Exception e) {
+    e.printStackTrace();
   }
 }
 
+void fileSelected(File selection) {
+  String moviePath = null;
+  if (selection == null) {
+    println("Window was closed or the user hit cancel.");
+    exit();
+  } else {
+    moviePath = selection.getAbsolutePath();
+    println("User selected " + moviePath);
+  }
+
+  frame = new Movie(this, moviePath);
+
+  frame.loop();
+  frame.volume(1);
+}
+
 void draw() {
-  image(myMovie, 0, 0, width, height);
-  scrape();
+  if(frame != null) {
+    image(frame, 0, 0, width, height);
+    scrape();
+  }
 }
 
 void movieEvent(Movie m) {
