@@ -11,10 +11,11 @@ PusherObserver observer;
 
 void setup() {
   selectInput("Select a file to process:", "fileSelected");
-  size(640,480);
+  size(64,64);
   registry = new DeviceRegistry();
   observer = new PusherObserver();
   registry.addObserver(observer);
+  registry.setAntiLog(true);
 
   // set system look and feel
   try {
